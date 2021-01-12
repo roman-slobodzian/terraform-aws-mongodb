@@ -2,49 +2,52 @@ data "aws_ami" "ubuntu" {
   most_recent = true
 
   filter {
-    name   = "name"
+    name = "name"
     values = ["ubuntu/images/hvm-ssd/ubuntu-bionic-18.04-amd64-server-*"]
   }
 
   filter {
-    name   = "virtualization-type"
+    name = "virtualization-type"
     values = ["hvm"]
   }
 
   filter {
-    name   = "root-device-type"
+    name = "root-device-type"
     values = ["ebs"]
   }
 
-  owners = ["099720109477"] # Canonical
+  owners = ["099720109477"]
+  # Canonical
 }
 
 resource "aws_instance" "mongodb" {
-  availability_zone = "${var.availability_zone}"
+  availability_zone = var.availability_zone
 
-  tags {
-    Name = "mongodb"
+  tags = {
+    Name: var.label
   }
 
-  ami           = "${data.aws_ami.ubuntu.id}"
-  instance_type = "${var.instance_type}"
+  ami = data.aws_ami.ubuntu.id
+  instance_type = var.instance_type
 
   root_block_device {
     volume_type = "gp2"
-    volume_size = "${var.volume_size}"
+    volume_size = var.volume_size
   }
 
-  key_name = "${var.key_name}"
+  key_name = var.key_name
   associate_public_ip_address = true
-  security_groups = ["${var.security_groups}"]
+  vpc_security_group_ids = var.vpc_security_group_ids
+  subnet_id = var.subnet_id
 
   connection {
-    user        = "ubuntu"
-    private_key = "${var.private_key}"
+    host = self.public_ip
+    user = "ubuntu"
+    private_key = var.private_key
   }
 
   provisioner "file" {
-    source      = "${path.module}/provision/wait-for-cloud-init.sh"
+    source = "${path.module}/provision/wait-for-cloud-init.sh"
     destination = "/tmp/wait-for-cloud-init.sh"
   }
 
@@ -57,7 +60,9 @@ resource "aws_instance" "mongodb" {
 
   provisioner "ansible" {
     plays {
-      playbook = "${path.module}/provision/playbook.yaml"
+      playbook {
+        file_path = "${path.module}/provision/playbook.yaml"
+      }
 
       # https://docs.ansible.com/ansible/2.4/intro_inventory.html#hosts-and-groups
       groups = ["db-mongodb"]

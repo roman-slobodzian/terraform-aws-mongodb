@@ -1,33 +1,44 @@
+variable "label" {
+  type = string
+  description = "EC2 instance Name tag"
+  default = "mongodb"
+}
+
 variable "availability_zone" {
-  type        = "string"
+  type = string
   description = "AWS Availability Zone to create the DB in."
-  default     = "us-east-1a"
+  default = "us-east-1a"
 }
 
 variable "instance_type" {
-  type        = "string"
+  type = string
   description = "The AWS EC2 tier to use for the DB instances."
-  default     = "t2.large"
+  default = "t2.large"
 }
 
 variable "volume_size" {
-  type        = "string"
+  type = string
   description = "Size of the DB storage volume."
-  default     = "100"
+  default = "100"
 }
 
-variable "security_groups" {
-  type        = "list"
-  description = "List of security group names."
-  default     = []
+variable "vpc_security_group_ids" {
+  type = list(string)
+  description = "List of security group ids."
+  default = []
+}
+
+variable "subnet_id" {
+  type = string
+  description = "EC2 subnet id"
 }
 
 variable "key_name" {
-  type        = "string"
+  type = string
   description = "Name of the key pair to provision the instance with."
 }
 
 variable "private_key" {
-  type        = "string"
+  type = string
   description = "Private key contents."
 }

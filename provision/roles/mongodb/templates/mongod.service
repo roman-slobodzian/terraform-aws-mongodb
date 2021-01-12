@@ -1,4 +1,4 @@
-# From: https://github.com/mongodb/mongo/blob/v4.0/debian/mongod.service
+# From: https://github.com/mongodb/mongo/blob/v4.4/debian/mongod.service
 
 [Unit]
 Description=High-performance, schema-free document-oriented database
