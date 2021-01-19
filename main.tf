@@ -46,6 +46,10 @@ resource "aws_instance" "mongodb" {
     private_key = var.private_key
   }
 
+  lifecycle {
+    ignore_changes = [ami]
+  }
+
   provisioner "file" {
     source = "${path.module}/provision/wait-for-cloud-init.sh"
     destination = "/tmp/wait-for-cloud-init.sh"
